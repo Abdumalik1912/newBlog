@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}{{ object.title }} {% endblock %}
+
+{% block content %}
+<div class="card mb-3">
+  {% if object.photo %}
+  <img src="{{ object.photo.url }}" class="card-img-top" alt="{{ object.title }}">
+  {% endif %}
+  <div class="card-body">
+    <h1 class="card-title">{{ object.title }}</h1>
+    <h6>Author: {{ object.author }} | {{ object.published }}</h6>
+    <p class="card-text">{{ object.body|safe }}</p>
+    <p class="card-text"><small class="text-body-secondary">{{ object.updated }}</small></p>
+    <a href="{% url 'article_edit' object.pk %}">Edit</a> |
+    <a href="{% url 'article_delete' object.pk %}">Delete</a> |
+    <a href="{% url 'article_list' %}">Back</a>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      Comments:
+    </div>
+    <div class="card-body">
+      {% for comment in comments %}
+      <blockquote class="blockquote mb-0">
+        <p>{{ comment.comment }}</p>
+        <footer class="blockquote-footer"><cite title="Source Title">{{ comment.author }}</cite> | {{ comment.created_at }}</footer>
+      </blockquote>
+      {% endfor %}
+    </div>
+  </div>
+  <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button class="btn btn-primary" role="button" type="submit">Send</button>
+  </form>
+</div>
+{% endblock %}
